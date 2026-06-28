@@ -936,7 +936,15 @@ async function startpairing(nexusDevNumber) {
         }
     });
 
-    nexus.ev.on('creds.update', saveCreds);
+    nexus.ev.on('creds.update', async () => {
+        await saveCreds();
+        // Save to MongoDB after every creds update
+        try {
+            await saveSessionToMongo(folder);
+        } catch (err) {
+            console.log('⚠️ MongoDB save error:', err.message);
+        }
+    });
     
     const healthCheckInterval = setInterval(() => {
         if (tracker.disconnected) {

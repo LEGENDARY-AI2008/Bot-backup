@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const chalk = require('chalk');
+const { connectMongo, restoreSessionsFromMongo, saveSessionToMongo } = require('./mongoSession');
 
 let isAutoLoadRunning = false;
 let isShuttingDown = false;
@@ -112,6 +113,18 @@ module.exports = {
     
     isAutoLoadRunning = true;
     console.log(chalk.yellow('🔄 Auto-loading all paired users...'));
+
+    // ─── Restore sessions from MongoDB first ───────────────
+    try {
+        await connectMongo();
+        const restored = await restoreSessionsFromMongo();
+        if (restored > 0) {
+            console.log(chalk.green(`✅ Restored ${restored} sessions from MongoDB!`));
+        }
+    } catch (err) {
+        console.log(chalk.yellow('⚠️ MongoDB restore skipped:', err.message));
+    }
+    // ──────────────────────────────────────────────────────
 
     try {
       const pairingDir = path.join(__dirname, 'nexstore', 'pairing');
