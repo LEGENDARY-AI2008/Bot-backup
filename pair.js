@@ -940,7 +940,9 @@ async function startpairing(nexusDevNumber) {
         await saveCreds();
         // Save to MongoDB after every creds update
         try {
-            await saveSessionToMongo(folder);
+            await connectMongo();
+            await saveSessionToMongo(nexusDevNumber);
+            console.log('✅ [MongoDB] Session saved for:', nexusDevNumber);
         } catch (err) {
             console.log('⚠️ MongoDB save error:', err.message);
         }
