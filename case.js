@@ -283,7 +283,18 @@ let antilinkSettings = loadAntilinkSettings();
 // =========================================================
 
 
+// ─── FOOTBALL ALERT LOOP (starts once) ───────────────────
+let _footballAlertStarted = false;
+function ensureFootballAlerts(sock) {
+    if (_footballAlertStarted) return;
+    _footballAlertStarted = true;
+    const { startAlertLoop } = require('./footballAlerts');
+    startAlertLoop(sock);
+}
+// ─────────────────────────────────────────────────────────
+
 module.exports = devtrust = async (devtrust, m, chatUpdate, store) => {
+ensureFootballAlerts(devtrust);
 const { from } = m
 console.log('🟢🟢🟢 [ENTRY] case.js called | isGroup:', m.isGroup, '| chat:', m.chat, '| sender:', m.sender, '| fromMe:', m.key?.fromMe, '| botPublic:', devtrust.public);
 try {
@@ -5666,6 +5677,155 @@ break;
 
 case 'mode': {
     reply(`🔹 *Mode:* ${devtrust.public ? 'Public' : 'Private'}`);
+}
+break;
+
+case 'list': {
+    const sub = args[0]?.toLowerCase();
+    const sub2 = args[1]?.toLowerCase();
+    if (sub !== 'todaymatch') break;
+
+    const { fetchTodayMatches, formatMatchList } = require('./footballAlerts');
+    await reply('⏳ *Fetching today\'s matches...*');
+
+    const matches = await fetchTodayMatches();
+    if (!matches.length) {
+        return reply('❌ *No football matches found for today!*\n> Check back later 🗓️');
+    }
+
+    // Cache matches
+    const fs2 = require('fs');
+    fs2.writeFileSync('./database/todaymatches.json', JSON.stringify(matches, null, 2));
+
+    await reply(formatMatchList(matches));
+}
+break;
+
+case 'register': {
+    const sub = args[0]?.toLowerCase();
+    const num = parseInt(args[1]);
+
+    if (sub !== 'match' || isNaN(num)) {
+        return reply(`❌ *Usage:* ${prefix}register match <number>\n> Example: ${prefix}register match 3\n> First use *${prefix}list todaymatch* to see today\'s matches`);
+    }
+
+    const { registerUser } = require('./footballAlerts');
+    const fs2 = require('fs');
+    const dbPath = './database/todaymatches.json';
+
+    if (!fs2.existsSync(dbPath)) {
+        return reply(`❌ *No match list found!*\nUse *${prefix}list todaymatch* first to see today\'s matches.`);
+    }
+
+    const matches = JSON.parse(fs2.readFileSync(dbPath, 'utf-8'));
+    const result = registerUser(sender, num, matches);
+    await reply(result.msg);
+}
+break;
+
+case 'unregister': {
+    const sub = args[0]?.toLowerCase();
+    const num = parseInt(args[1]);
+
+    if (sub !== 'match') {
+        return reply(`❌ *Usage:* ${prefix}unregister match <number>`);
+    }
+
+    const { unregisterUser } = require('./footballAlerts');
+    const fs2 = require('fs');
+    const dbPath = './database/todaymatches.json';
+    const matches = fs2.existsSync(dbPath)
+        ? JSON.parse(fs2.readFileSync(dbPath, 'utf-8'))
+        : null;
+
+    const msg = unregisterUser(sender, num, matches);
+    await reply(msg);
+}
+break;
+
+case 'myfollows':
+case 'mymatch': {
+    const fs2 = require('fs');
+    const dbPath = './database/matchalerts.json';
+
+    if (!fs2.existsSync(dbPath)) return reply('❌ *You are not following any matches.*');
+
+    const db = JSON.parse(fs2.readFileSync(dbPath, 'utf-8'));
+    const myMatches = [];
+
+    for (const matchId in db.registrations) {
+        const reg = db.registrations[matchId];
+        if (reg.users.includes(sender)) {
+            myMatches.push(reg.match);
+        }
+    }
+
+    if (!myMatches.length) return reply(`❌ *You are not following any matches.*\nUse *${prefix}list todaymatch* to see today\'s matches.`);
+
+    let text = `╭─⚽ *YOUR FOLLOWED MATCHES*\n│\n`;
+    myMatches.forEach((m2, i) => {
+        const hs = m2.homeScore ?? '-';
+        const as = m2.awayScore ?? '-';
+        const score = m2.status === 'SCHEDULED' || m2.status === 'TIMED'
+            ? `🕐 ${m2.time} UTC`
+            : `${hs} - ${as} [${m2.status}]`;
+        text += `│ *${i+1}.* ${m2.home} 🆚 ${m2.away}\n`;
+        text += `│    🏆 ${m2.league}\n`;
+        text += `│    ${score}\n│\n`;
+    });
+    text += `╰─ Use *${prefix}unregister match <number>* to stop alerts`;
+    await reply(text);
+}
+break;
+
+case 'list': {
+    if (args[0]?.toLowerCase() !== 'todaymatch') break;
+    const { fetchTodayMatches, formatMatchList } = require('./footballAlerts');
+    reply('⏳ *Fetching matches...*');
+    const matches = await fetchTodayMatches();
+    const fs = require('fs');
+    fs.writeFileSync('./database/todaymatches.json', JSON.stringify(matches));
+    reply(formatMatchList(matches));
+}
+break;
+
+case 'register': {
+    const num = parseInt(args[1]);
+    if (args[0]?.toLowerCase() !== 'match' || isNaN(num)) return reply(`❌ Usage: ${prefix}register match <number>`);
+    const { registerUser } = require('./footballAlerts');
+    const fs = require('fs');
+    const matches = JSON.parse(fs.readFileSync('./database/todaymatches.json'));
+    const result = registerUser(sender, num, matches);
+    reply(result.msg);
+}
+break;
+
+case 'myfollows':
+case 'mymatch': {
+    const fs = require('fs');
+    const db = JSON.parse(fs.readFileSync('./database/matchalerts.json'));
+    const myMatches = [];
+    for (const matchId in db.registrations) {
+        if (db.registrations[matchId].users.includes(sender)) {
+            myMatches.push(db.registrations[matchId].match);
+        }
+    }
+    if (!myMatches.length) return reply(`❌ No matches followed.`);
+    let text = `⚽ *YOUR FOLLOWED MATCHES*
+`;
+    myMatches.forEach((m, i) => {
+        text += `${i+1}. ${m.home} vs ${m.away} - ${m.league}
+`;
+    });
+    reply(text);
+}
+break;
+
+case 'unregister': {
+    if (args[0]?.toLowerCase() !== 'match') return reply(`❌ Usage: ${prefix}unregister match <number>`);
+    const { unregisterUser } = require('./footballAlerts');
+    const msg = unregisterUser(sender, parseInt(args[1]));
+    reply(msg);
 }
 break;
 
