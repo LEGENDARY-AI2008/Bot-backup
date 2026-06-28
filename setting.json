@@ -1,0 +1,372 @@
+{
+  "bot": {
+    "mode": "self"
+  },
+  "2347043241922@s.whatsapp.net": {
+    "feature.autoreply": true
+  },
+  "2348152493572@s.whatsapp.net": {
+    "autoViewStatus": true
+  },
+  "254755132748@s.whatsapp.net": {
+    "autoViewStatus": true
+  },
+  "256783629209661@lid": {
+    "feature.autoreply": true,
+    "feature.antibadword": true
+  },
+  "254798575868@s.whatsapp.net": {
+    "autoViewStatus": true,
+    "autobio": true
+  },
+  "254791079370@s.whatsapp.net": {
+    "banned": false
+  },
+  "189619131965593@s.whatsapp.net": {
+    "banned": true
+  },
+  "120363427385220860@g.us": {
+    "welcomeMessage": "╭━━━々 𝚆 𝙴 𝙻 𝙲 𝙾 𝙼 𝙴 々━━━╮\n┃ ➺ *々 Welcome {member} to This Group *\n┃ ➺ *々 Members: 44*\n┃ ➺ We Hope You Have A Nice Time Here!\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    "autoReact": false
+  },
+  "120363383741265989@g.us": {
+    "welcomeMessage": "╭━━━々 𝚆 𝙴 𝙻 𝙲 𝙾 𝙼 𝙴 々━━━╮\n┃ ➺ *々 Welcome {member} to This Group *\n┃ ➺ *々 Members: 44*\n┃ ➺ We Hope You Have A Nice Time Here!\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    "autoReact": false,
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    }
+  },
+  "2349040605753@s.whatsapp.net": {
+    "autoViewStatus": false
+  },
+  "120363406900606692@g.us": {
+    "antitag": {
+      "enabled": true,
+      "action": "delete"
+    },
+    "feature.antibadword": true,
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    }
+  },
+  "2349169868945@s.whatsapp.net": {
+    "autoViewStatus": false,
+    "alwaysOnline": true,
+    "readMsg": true
+  },
+  "33308025049207@lid": {
+    "feature.antibadword": false
+  },
+  "120363425254819885@g.us": {
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    },
+    "feature.antibadword": false,
+    "autoReact": false
+  },
+  "120363425286216552@g.us": {
+    "autoReact": false,
+    "antispam": {
+      "enabled": false,
+      "action": "delete"
+    },
+    "feature.antibadword": false,
+    "rewards": true,
+    "rewards_data": {
+      "88511457808636@lid": {
+        "points": 16,
+        "lastClaim": 1781982566710,
+        "streak": 1
+      },
+      "2349158203054@s.whatsapp.net": {
+        "points": 12,
+        "lastClaim": 1781982571223,
+        "streak": 1
+      },
+      "217398963630324@lid": {
+        "points": 15,
+        "lastClaim": 1781982571551,
+        "streak": 1
+      },
+      "2348063788754@s.whatsapp.net": {
+        "points": 28,
+        "lastClaim": 1781982577986,
+        "streak": 1
+      }
+    },
+    "screenshot": true,
+    "polls": true,
+    "confess": true
+  },
+  "120363161489759041@g.us": {
+    "autoReact": false,
+    "autoTyping": true
+  },
+  "120363167678490286@g.us": {
+    "autoReact": true
+  },
+  "120363171517279325@g.us": {
+    "autoReact": false
+  },
+  "143680077852683@s.whatsapp.net": {
+    "banned": true
+  },
+  "2349130657677@s.whatsapp.net": {
+    "autoViewStatus": false,
+    "autoread": true,
+    "autoReactChannel": true
+  },
+  "120363406750802323@g.us": {
+    "autoTyping": true
+  },
+  "120363403321869728@g.us": {
+    "autoReact": false
+  },
+  "120363424945728640@g.us": {
+    "antitag": {
+      "enabled": false,
+      "action": "delete"
+    },
+    "feature.antibadword": true,
+    "welcome": true,
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    },
+    "autoReact": false
+  },
+  "2349036737229@s.whatsapp.net": {
+    "autoViewStatus": false,
+    "antiDelete": false
+  },
+  "2349137181642@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "2348063788754@s.whatsapp.net": {
+    "autoViewStatus": false,
+    "antiDelete": false,
+    "likeStatus": false,
+    "saveStatus": true,
+    "antiEdit": true,
+    "autobio": false,
+    "autoReactChannel": true
+  },
+  "2349158203054@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "2349126010405@s.whatsapp.net": {
+    "antiDelete": false,
+    "likeStatus": true
+  },
+  "2349166906146@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "241343490195542@s.whatsapp.net": {
+    "banned": true
+  },
+  "120363333244643116@g.us": {
+    "welcome": false
+  },
+  "120363424606332601@g.us": {
+    "autoTyping": false
+  },
+  "2349122193674@s.whatsapp.net": {
+    "antiDelete": true
+  },
+  "2348155987778@s.whatsapp.net": {
+    "autoViewStatus": false,
+    "antiDelete": true,
+    "alwaysOnline": true,
+    "likeStatus": true
+  },
+  "120363425640147227@g.us": {
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    }
+  },
+  "@s.whatsapp.net": {
+    "banned": true
+  },
+  "120363239128368762@g.us": {
+    "autoTyping": true
+  },
+  "2349071259547@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "2349016226365@s.whatsapp.net": {
+    "antiDelete": false,
+    "antiEdit": true
+  },
+  "2347035674769@s.whatsapp.net": {
+    "antiDelete": true
+  },
+  "2347035491640@s.whatsapp.net": {
+    "antiDelete": false,
+    "autoReactChannel": true
+  },
+  "31066203140236@s.whatsapp.net": {
+    "banned": true
+  },
+  "2347025138390@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "2349056760155@s.whatsapp.net": {
+    "antiEdit": true,
+    "autoReactChannel": true,
+    "antiDelete": false
+  },
+  "2349080082583@s.whatsapp.net": {
+    "autobio": true
+  },
+  "113958736412705@lid": {
+    "antiEditChat": true
+  },
+  "2349021811794@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "120363427814213177@g.us": {
+    "antitag": {
+      "enabled": true,
+      "action": "delete"
+    },
+    "welcome": false,
+    "feature.antibadword": true
+  },
+  "120363029449929125@g.us": {
+    "autoReact": true
+  },
+  "120363424205674577@g.us": {
+    "feature.antibadword": false,
+    "welcome": true
+  },
+  "120363426635718334@g.us": {
+    "welcome": true,
+    "feature.antibadword": false
+  },
+  "120363426803292072@g.us": {
+    "welcome": true
+  },
+  "120363431061423743@g.us": {
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    }
+  },
+  "2347066401748@s.whatsapp.net": {
+    "antiDelete": true
+  },
+  "923065373771@s.whatsapp.net": {
+    "banned": false
+  },
+  "120363423561103870@g.us": {
+    "welcome": false
+  },
+  "120363410933228419@g.us": {
+    "welcome": true
+  },
+  "99493336887404@s.whatsapp.net": {
+    "banned": true
+  },
+  "66134560768122@s.whatsapp.net": {
+    "banned": true
+  },
+  "923271452615@s.whatsapp.net": {
+    "antiDelete": true
+  },
+  "2349126421039@s.whatsapp.net": {
+    "alwaysOnline": true,
+    "autoViewStatus": true,
+    "autobio": true
+  },
+  "120363427928621994@g.us": {
+    "welcome": true
+  },
+  "120363427206373322@g.us": {
+    "feature.antibadword": true,
+    "welcome": true
+  },
+  "120363413107966814@g.us": {
+    "feature.antibadword": true
+  },
+  "2347063089306@s.whatsapp.net": {
+    "likeStatus": true,
+    "readStatus": true,
+    "autoReactChannel": true,
+    "antiDelete": false,
+    "alwaysOnline": true,
+    "autoViewStatus": true
+  },
+  "120363403496860755@g.us": {
+    "autoReact": false,
+    "autoTyping": true
+  },
+  "229223092502613@lid": {
+    "autoReact": false
+  },
+  "2348036592730@s.whatsapp.net": {
+    "banned": true
+  },
+  "2348163287001@s.whatsapp.net": {
+    "banned": true
+  },
+  "2349136355707@s.whatsapp.net": {
+    "alwaysOnline": true,
+    "rejectCall": true,
+    "antiDelete": true,
+    "antiEdit": true
+  },
+  "110072009117774@lid": {
+    "feature.antibadword": true
+  },
+  "275797734613166@lid": {
+    "feature.antibadword": true
+  },
+  "2348137419241@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "233206875120@s.whatsapp.net": {
+    "antiDelete": true
+  },
+  "2349168123835@s.whatsapp.net": {
+    "antiDelete": true
+  },
+  "2349168123835@s.whatsapp.net120363406815026445@g.us": {
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    }
+  },
+  "2349168123835@s.whatsapp.net120363426280644529@g.us": {
+    "antispam": {
+      "enabled": true,
+      "action": "delete"
+    }
+  },
+  "2348103489940@s.whatsapp.net": {
+    "alwaysOnline": true
+  },
+  "120363425935415396@g.us": {
+    "autoReact": true
+  },
+  "2349113225897@s.whatsapp.net": {
+    "antiDelete": false
+  },
+  "2348063788754@s.whatsapp.net120363429254619396@g.us": {
+    "welcome": true
+  },
+  "2348102895620@s.whatsapp.net120363429254619396@g.us": {
+    "welcome": true
+  },
+  "2349033085663@s.whatsapp.net": {
+    "antiDelete": true,
+    "autoViewStatus": true,
+    "likeStatus": true
+  },
+  "177906756120761@lid": {
+    "antiEditChat": true
+  }
+}
