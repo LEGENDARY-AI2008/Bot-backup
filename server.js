@@ -16,15 +16,8 @@ const app = express();
 const PORT = process.env.PORT || 3059;
 
 app.use(cors());
-app.use((req, res, next) => {
-    res.setHeader("ngrok-skip-browser-warning", "true");
-    next();
-});
 app.use(express.json());
-// Serve index.html at root
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PAIRING_DIR = './nexstore/pairing';
 const activeSessions = new Map();
@@ -48,7 +41,6 @@ app.post('/pair', async (req, res) => {
     }
 
     const sessionPath = `${PAIRING_DIR}/${number}@s.whatsapp.net`;
-    if (fs.existsSync(sessionPath)) fs.rmSync(sessionPath, { recursive: true, force: true });
     ensureDir(sessionPath);
 
     try {
@@ -135,29 +127,34 @@ app.get('/status/:number', (req, res) => {
     res.json({ paired: false });
 });
 
-// ─── Start server + ngrok ─────────────────────────────────────────────────────
+// ─── Start server + localtunnel ───────────────────────────────────────────────
 app.listen(PORT, async () => {
     console.log(`✅ LËGĚNDÃRY BØT Pairing Server running on port ${PORT}`);
 
     try {
-        const ngrok = require('@ngrok/ngrok');
+        const localtunnel = require('localtunnel');
+        const tunnel = await localtunnel({ port: PORT, subdomain: 'legendary-bot-pair' });
 
-        const listener = await ngrok.forward({
-            addr: PORT,
-            authtoken: '3FPNo75PR6zZS7E1kHukK4FAVwq_88YQrTNjNRRkCEqecuefY',
-            domain: 'ahead-obscurity-swinging.ngrok-free.dev',
-        });
-
-        const url = listener.url();
         console.log(`\n🌐 ====================================`);
         console.log(`🌐 PUBLIC PAIRING API URL:`);
-        console.log(`🌐 ${url}`);
-        console.log(`🌐 ====================================\n`);
+        console.log(`🌐 ${tunnel.url}`);
+        console.log(`🌐 ====================================`);
+        console.log(`📋 Copy this URL and set it as BOT_API_URL in your Vercel project!\n`);
 
+        // Save to file for easy access
         ensureDir('./nexstore');
-        fs.writeFileSync('./nexstore/tunnel_url.txt', url);
+        fs.writeFileSync('./nexstore/tunnel_url.txt', tunnel.url);
+
+        tunnel.on('close', () => {
+            console.log('⚠️ Tunnel closed. Restart bot to get new tunnel URL.');
+        });
+
+        tunnel.on('error', (err) => {
+            console.log(`⚠️ Tunnel error: ${err.message}`);
+        });
 
     } catch (e) {
-        console.log(`⚠️ ngrok failed: ${e.message}`);
+        console.log(`⚠️ Localtunnel failed: ${e.message}`);
+        console.log(`⚠️ Install with: npm install localtunnel`);
     }
 });
