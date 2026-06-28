@@ -1047,6 +1047,127 @@ if (m.message) {
     console.log(chalk.hex('#3498db')(`message " ${m.message} "  from ${pushname} id ${m.isGroup ? `group ${groupMetadata.subject}` : 'private chat'}`));
 }
 
+// ===== ANTI-DELETE SYSTEM =====
+const messageStore = new Map(); // Store recent messages for anti-delete
+
+// Store messages as they come in
+devtrust.ev.on('messages.upsert', async ({ messages }) => {
+    for (const msg of messages) {
+        if (!msg.message) continue;
+        if (msg.key.fromMe) continue;
+        // Store message for 10 minutes
+        messageStore.set(msg.key.id, {
+            msg,
+            chat: msg.key.remoteJid,
+            sender: msg.key.participant || msg.key.remoteJid,
+            timestamp: Date.now()
+        });
+        // Clean old messages (older than 10 mins)
+        for (const [id, data] of messageStore.entries()) {
+            if (Date.now() - data.timestamp > 600000) messageStore.delete(id);
+        }
+    }
+});
+
+// Catch deleted messages
+devtrust.ev.on('messages.update', async (updates) => {
+    for (const update of updates) {
+        try {
+            if (!update.update?.message) continue;
+            const isRevoked = update.update.message?.protocolMessage?.type === 0;
+            if (!isRevoked) continue;
+
+            const deletedId = update.update.message.protocolMessage?.key?.id;
+            if (!deletedId) continue;
+
+            const stored = messageStore.get(deletedId);
+            if (!stored) continue;
+
+            const { msg, chat, sender } = stored;
+
+            // Check if antiDelete is on — find which user enabled it
+            // Check sender's setting first, then global bot setting
+            const senderJid = msg.key.participant || msg.key.remoteJid;
+            const senderNumber = senderJid.split('@')[0];
+            
+            // Check if the person who sent the deleted msg has antidelete on
+            // OR if the chat owner (bot user) has it on globally
+            const antiDeleteEnabled = getSetting(senderJid, 'antiDelete', false) || 
+                                      getSetting(chat, 'antiDelete', false) ||
+                                      getSetting(botNumber, 'antiDelete', false);
+            
+            if (!antiDeleteEnabled) continue;
+
+            // Send to the session user (person who paired the bot), not owner
+            // Each Baileys session has their own number as botNumber
+            const ownerJid = botNumber.includes('@') ? botNumber : botNumber + '@s.whatsapp.net';
+            const senderName = msg.pushName || sender.split('@')[0];
+            const chatName = chat.endsWith('@g.us') ? 'Group' : 'DM';
+
+            let caption = `🗑️ *ANTI-DELETE*\n\n` +
+                `👤 *Sender:* ${senderName}\n` +
+                `📍 *Chat:* ${chatName}\n` +
+                `🕐 *Time:* ${new Date().toLocaleString()}\n\n` +
+                `*Deleted Message:*`;
+
+            const msgContent = msg.message;
+            const mtype = Object.keys(msgContent)[0];
+
+            if (mtype === 'conversation' || mtype === 'extendedTextMessage') {
+                const text = msgContent.conversation || msgContent.extendedTextMessage?.text;
+                await devtrust.sendMessage(ownerJid, {
+                    text: caption + '\n' + text
+                });
+            } else if (mtype === 'imageMessage') {
+                try {
+                    const buffer = await devtrust.downloadMediaMessage(msg);
+                    await devtrust.sendMessage(ownerJid, {
+                        image: buffer,
+                        caption: caption
+                    });
+                } catch {
+                    await devtrust.sendMessage(ownerJid, { text: caption + '\n[Image - could not retrieve]' });
+                }
+            } else if (mtype === 'videoMessage') {
+                try {
+                    const buffer = await devtrust.downloadMediaMessage(msg);
+                    await devtrust.sendMessage(ownerJid, {
+                        video: buffer,
+                        caption: caption
+                    });
+                } catch {
+                    await devtrust.sendMessage(ownerJid, { text: caption + '\n[Video - could not retrieve]' });
+                }
+            } else if (mtype === 'audioMessage') {
+                try {
+                    const buffer = await devtrust.downloadMediaMessage(msg);
+                    await devtrust.sendMessage(ownerJid, {
+                        audio: buffer,
+                        mimetype: 'audio/mpeg',
+                        caption: caption
+                    });
+                } catch {
+                    await devtrust.sendMessage(ownerJid, { text: caption + '\n[Audio - could not retrieve]' });
+                }
+            } else if (mtype === 'stickerMessage') {
+                try {
+                    const buffer = await devtrust.downloadMediaMessage(msg);
+                    await devtrust.sendMessage(ownerJid, { sticker: buffer });
+                    await devtrust.sendMessage(ownerJid, { text: caption + '\n[Sticker above]' });
+                } catch {
+                    await devtrust.sendMessage(ownerJid, { text: caption + '\n[Sticker - could not retrieve]' });
+                }
+            } else {
+                await devtrust.sendMessage(ownerJid, { text: caption + `\n[${mtype}]` });
+            }
+
+            messageStore.delete(deletedId);
+        } catch (err) {
+            console.error('[AntiDelete] Error:', err.message);
+        }
+    }
+});
+
 // ===== WELCOME / GOODBYE SYSTEM =====
 
 const welcomeCooldown = new Set();
@@ -1300,13 +1421,8 @@ case 'menu': {
     
 await autoJoinGroup(devtrust, "https://chat.whatsapp.com/HwsNYGNpBHjKAbBrY9Cjta");
     
-    const menuImages = [
-    'https://litter.catbox.moe/llx65i.jpg',
-    'https://put.icu/s/ov9qqv22.jpg',
-    'https://c.termai.cc/i126/VoV405o.jpg'
-];
-    
-    const randomImage = menuImages[Math.floor(Math.random() * menuImages.length)];
+    // Football menu image - LËGĚNDÃRY BØT World Cup Edition
+    const randomImage = './media/football_menu.jpg';
     const uptime = formatUptime(process.uptime());
     const totalMem = os.totalmem();
     const freeMem = os.freemem();
@@ -1327,70 +1443,95 @@ await autoJoinGroup(devtrust, "https://chat.whatsapp.com/HwsNYGNpBHjKAbBrY9Cjta"
     
     // ALPHABETICAL SECTIONS
     const menuText = `
-╭─❏ ⚽ 𝘓𝘌𝘎𝘌𝘕𝘋𝘈𝘙𝘠 𝘐𝘚 𝘉𝘈𝘊𝘒 𝘖𝘕 𝘛𝘏𝘌 𝘗𝘐𝘛𝘊𝘏 ⚽ ❏
-│
-│ 🏟️ *𝗟𝗘𝗚𝗘𝗡𝗗𝗔𝗥𝗬 𝗕𝗢𝗧* – STARTING XI
-│ 👕 730+ Commands in the Squad
-│ 🔧 Auto-React • Games • Economy
-│ ⚡ Leveling • Adventure • Downloads
-│
-│ 🌙 ${greeting}, *${pushname}!* 👋
-│ 🕐 *${currentDateTime}*
-│
-│ ╔══════════════════════╗
-│ ║ 👤 User  : @${m?.sender.split('@')[0]}
-│ ║ 🤖 Bot   : *LËGĚNDÃRY BØT*
-│ ║ 👑 Owner : ${ownerName}
-│ ║ 🔧 Prefix: [ ${prefix} ]
-│ ║ 🔒 Mode  : ${botMode}
-│ ║ ⏱️  Uptime: ${uptime}
-│ ║ 💾 RAM   : ${ramInfo}
-│ ║ 📦 Cmds  : ${totalCommands} loaded
-│ ╚══════════════════════╝
-│
-│ 📚 USE: ${prefix}menu <category>
-│
-│ ⚽ COMMAND SQUAD:
-│ 1️⃣  ${prefix}menu economy     (💰 Balance, Shop)
-│ 2️⃣  ${prefix}menu games       (🎮 Dice, RPS, Slots)
-│ 3️⃣  ${prefix}menu social      (👥 Marry, Kiss, Hug)
-│ 4️⃣  ${prefix}menu tools       (🔧 Weather, Calc)
-│ 5️⃣  ${prefix}menu music       (🎵 Songs, Download)
-│ 6️⃣  ${prefix}menu media       (🎬 Movies, Anime)
-│ 7️⃣  ${prefix}menu group       (🛡️ Admin, Warn)
-│ 8️⃣  ${prefix}menu sticker     (🎨 Stickers, GIF)
-│ 9️⃣  ${prefix}menu ai          (🤖 GPT, Gemini)
-│ 🔟 ${prefix}menu owner       (👑 Owner Only)
-│
-│ 🎯 *FOOTBALL FEATURES* ⚽
-│ ✅ ${prefix}list todaymatch   (Today's Matches)
-│ ✅ ${prefix}register match <n> (Follow Match)
-│ ✅ ${prefix}myfollows          (My Matches)
-│
-│ 🏆 *WORLD CUP EDITION* 🏆
-│ ⏰ LIVE: June 2026
-│
-│ 🔗 Pair: https://legendary-bot-pairing-site.vercel.app
-│ 📢 TG: https://t.me/legendary001bot
-│
-╰─〔 Powered by LËGĒNDÃRY ƁØT™ ⚡ 〕
+🏆 *LËGĚNDÃRY BØT* – WORLD CUP EDITION 🏆
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-> LËGĒNDÃRY CARES ♡ (Even After Extra Time) 🌚`;
+🌙 ${greeting}, *${pushname}* 👋
+
+│ 🎮 *Player:* ${pushname} (Captain)
+│ ⚽ *Formation:* 4-3-3 ATTACK
+│ 🏟️ *Stadium:* LËGĒNDÃRY Arena
+│ 👕 *Kit:* ${prefix} (Home)
+│ 🧤 *GK Gloves:* LËGĒNDÃRY LAB STUDIO
+│ 🎯 *Striker:* ${botMode} Mode
+│ ⏱️ *Match Time:* ${uptime}
+│ 💾 *Formation:* ${ramInfo}
+│ 🏅 *Total Trophies:* ${totalCommands} 🏆
+│ 🌐 *Venue:* Render Stadium
+│ 🔥 *Second Half:* @${m?.sender.split('@')[0]}
+│ 🕐 *${currentDateTime}*
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *ALL COMMANDS:*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+│ .ai .openai .gemini .mistral .deepseek .llama .gpt4 .gpt5
+│ .rewrite .lyrics .aisearch .coder .reasoning .bidara
+│ .ytv .yta .play .tt .tiktok .instagram .facebook .fbdl
+│ .igdl .apk .gitclone .ytmp3 .ytsearch .spotify .spotifydl
+│ .movie .movie2 .selectmovie .dlmovie .imdb
+│ .slap .hug .kiss .pat .cuddle .tickle .feed .smug
+│ .neko .meow .woof .goose .lizard .foxgirl .wallpaper
+│ .hack .pickupl .wyr .insult .emojimix .8ball .advice
+│ .compliment .dadjoke .dare .truth .fact .flirt .joke
+│ .quote .roast .meme .coin .dice .guess .hangman .math
+│ .rps .rpsls .numbattle .coinbattle .trivia .recipe .book
+│ .anime .manga .waifu .animegif .animequote .animenews
+│ .fox .panda .rwaifu .animewlp .toukachan .tsunade .yuki
+│ .wallhp .wallml .pinterest .removebg .animesearch
+│ .msgs .listonline .listoffline .quoted .afk .areact
+│ .calculate .currency .define .weather .weather2 .wiki
+│ .readqr .shorturl .github .ffstalk .npmstalk .remind
+│ .toimg .tomp3 .tomp4 .tourl .url .myip .genpass
+│ .add .kick .promote .demote .tagall .hidetag .tagadmin
+│ .admins .mute .unmute .antilink .antispam .antibadword
+│ .setname .setdesc .setgrouppp .linkgc .revoke .groupinfo
+│ .welcome .poll .closetime .opentime .gstatus .invite
+│ .delete .kickadmins .kickall .creategroup .setrules .rules
+│ .announce .gstats .timedmute .joinlog .checkinactive
+│ .leaderboard .topactive .claim .daily .points .rewardson
+│ .addpremium .removepremium .checkpremium .premiumlist
+│ .truth .dare .todgameon .dice .coinflip .roast .confess
+│ .analyze .aiimageon .translate .tr .translateon .ss .sshot
+│ .sticker .photo .roundstk .circlestk .exif .gif .ptv
+│ .tosticker .take .steal .wm .qc .tgstickers
+│ .tts .aitts .tomp3 .tovv .chipmunk .echo .fat .say .gtts
+│ .bass .deep .nightcore .slow .fast .robot .reverse .earrape
+│ .vv .vv2 .readviewonce2 .pair
+│ .setprefix .mode .public .private .autoread .autoreact
+│ .autotyping .autorecording .autobio .autoviewstatus
+│ .antidelete .readstatus .likestatus .alwaysonline
+│ .antiedit .savestatus .cmdreact .rejectcall
+│ .ban .unban .block .unblock .broadcast .addsudo .delsudo
+│ .setpp .owner .repo .ping .alive .runtime .leave
+│ .list todaymatch .register match .myfollows .unregister
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔗 Pair: https://legendary-bot-pairing-site.vercel.app
+📢 TG: https://t.me/legendary001bot
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+> © LËGĒNDÃRY LAB STUDIO™ 2026 ⚡`;
 
     try {
-        await devtrust.sendMessage(from, 
-            addNewsletterContext({
-                image: { url: randomImage },
+        let menuImageData;
+        try {
+            menuImageData = fs.readFileSync('./media/football_menu.jpg');
+        } catch {
+            menuImageData = null;
+        }
+        await devtrust.sendMessage(from,
+            addNewsletterContext(menuImageData ? {
+                image: menuImageData,
                 caption: menuText
-            }), 
+            } : {
+                text: menuText
+            }),
             { quoted: m }
         );
     } catch (imageError) {
         console.log('❌ Menu image failed, sending text only:', imageError.message);
-        await devtrust.sendMessage(from, 
+        await devtrust.sendMessage(from,
             addNewsletterContext({
                 text: menuText
-            }), 
+            }),
             { quoted: m }
         );
     }
@@ -2000,10 +2141,10 @@ case "antidelete": {
     if (!args[0]) return reply(`⚙️ *Usage:* ${prefix}antidelete on/off`);
 
     if (args[0].toLowerCase() === "on") {
-        setSetting(m.sender, "antiDelete", true);
-        reply("✅ *Anti-delete enabled* • Deleted messages will be sent to your DM");
+        setSetting(botNumber, "antiDelete", true);
+        reply("✅ *Anti-delete enabled*\n\nDeleted messages will be forwarded to *your DM* 📩");
     } else if (args[0].toLowerCase() === "off") {
-        setSetting(m.sender, "antiDelete", false);
+        setSetting(botNumber, "antiDelete", false);
         reply("❌ *Anti-delete disabled*");
     } else reply(`⚙️ *Usage:* ${prefix}antidelete on/off`);
 }
@@ -2730,17 +2871,39 @@ break;
 
 case "aitts":
 case "tts": {
-    if (!text) return reply(`🔊 *Text to Speech*\nUsage: ${prefix}tts [text]`);
+    if (!text) return reply(`🔊 *Text to Speech*\nUsage: ${prefix}tts [text]\n_Max: 20,000 characters_`);
+    if (text.length > 20000) return reply(`❌ *Text too long!* Max is 20,000 characters.\nYours: ${text.length} characters`);
     try {
         reply('⏳ *Generating speech...*');
         const gTTS = require('google-tts-api');
-        const url = gTTS.getAudioUrl(text, { lang: 'en', slow: false, host: 'https://translate.google.com' });
-        await devtrust.sendMessage(m.chat, {
-            audio: { url },
-            mimetype: 'audio/mpeg',
-            ptt: false
-        }, { quoted: m });
-    } catch (e) { reply(`❌ *Error:* ${e.message}`); }
+        // Split into chunks of 200 chars (Google TTS limit per request)
+        const getAllAudioUrls = gTTS.getAllAudioUrls(text, {
+            lang: 'en',
+            slow: false,
+            host: 'https://translate.google.com',
+            splitPunct: ',.!?;:'
+        });
+        if (getAllAudioUrls.length === 1) {
+            // Single chunk - send directly
+            await devtrust.sendMessage(m.chat, {
+                audio: { url: getAllAudioUrls[0].url },
+                mimetype: 'audio/mpeg',
+                ptt: false
+            }, { quoted: m });
+        } else {
+            // Multiple chunks - notify user
+            reply(`🔊 *Text split into ${getAllAudioUrls.length} parts. Sending all...*`);
+            for (let i = 0; i < getAllAudioUrls.length; i++) {
+                await devtrust.sendMessage(m.chat, {
+                    audio: { url: getAllAudioUrls[i].url },
+                    mimetype: 'audio/mpeg',
+                    ptt: false,
+                    fileName: `part_${i+1}.mp3`
+                }, { quoted: m });
+                await new Promise(r => setTimeout(r, 500));
+            }
+        }
+    } catch (e) { reply(`❌ *TTS Error:* ${e.message}`); }
 }
 break;
 
@@ -4955,7 +5118,27 @@ case "play": {
         const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
         const errors = [];
 
-        // Method 1: cobalt.tools (fixed request format)
+        // Method 1: @distube/ytdl-core (most reliable)
+        try {
+            const ytdl = require('@distube/ytdl-core');
+            const stream = ytdl(ytUrl, { filter: 'audioonly', quality: 'highestaudio' });
+            const chunks = [];
+            await new Promise((resolve, reject) => {
+                stream.on('data', chunk => chunks.push(chunk));
+                stream.on('end', resolve);
+                stream.on('error', reject);
+                setTimeout(() => reject(new Error('ytdl timeout')), 60000);
+            });
+            const buffer = Buffer.concat(chunks);
+            return await devtrust.sendMessage(m.chat, {
+                audio: buffer,
+                mimetype: 'audio/mpeg',
+                fileName: `${trackName}.mp3`,
+                ptt: false
+            }, { quoted: m });
+        } catch (e) { errors.push(`ytdl: ${e.message}`); }
+
+        // Method 2: cobalt.tools
         try {
             const cobaltRes = await axios.post(
                 'https://api.cobalt.tools/',
@@ -4971,72 +5154,28 @@ case "play": {
                     ptt: false
                 }, { quoted: m });
             }
-            errors.push(`cobalt: no url (${JSON.stringify(cobaltRes.data).slice(0,80)})`);
+            errors.push(`cobalt: no url`);
         } catch (e) { errors.push(`cobalt: ${e.message}`); }
 
-        // Method 2: loader.to with proper polling (up to 60 seconds)
+        // Method 3: yt-dlp via API
         try {
-            const loaderRes = await axios.get(
-                `https://loader.to/ajax/download.php?format=mp3&url=${encodeURIComponent(ytUrl)}`,
-                { headers: { 'Referer': 'https://loader.to/' }, timeout: 15000 }
+            const ytApiRes = await axios.get(
+                `https://yt-download.org/api/button/mp3/${videoId}`,
+                { timeout: 20000 }
             );
-            const loaderId = loaderRes.data?.id;
-            if (loaderId) {
-                let dlUrl = null;
-                for (let i = 0; i < 12; i++) {
-                    await new Promise(r => setTimeout(r, 5000));
-                    const progressRes = await axios.get(
-                        `https://loader.to/ajax/progress.php?id=${loaderId}`,
-                        { headers: { 'Referer': 'https://loader.to/' }, timeout: 15000 }
-                    );
-                    if (progressRes.data?.download_url) {
-                        dlUrl = progressRes.data.download_url;
-                        break;
-                    }
-                    if (progressRes.data?.success === 0 && progressRes.data?.progress >= 100) break;
-                }
-                if (dlUrl) {
-                    return await devtrust.sendMessage(m.chat, {
-                        audio: { url: dlUrl },
-                        mimetype: 'audio/mpeg',
-                        fileName: `${trackName}.mp3`,
-                        ptt: false
-                    }, { quoted: m });
-                }
-                errors.push(`loader.to: timed out waiting for download`);
-            } else {
-                errors.push(`loader.to: no id (${JSON.stringify(loaderRes.data).slice(0,80)})`);
+            const dlMatch = ytApiRes.data?.match(/href="(https:\/\/[^"]+\.mp3[^"]*)"/);
+            if (dlMatch?.[1]) {
+                return await devtrust.sendMessage(m.chat, {
+                    audio: { url: dlMatch[1] },
+                    mimetype: 'audio/mpeg',
+                    fileName: `${trackName}.mp3`,
+                    ptt: false
+                }, { quoted: m });
             }
-        } catch (e) { errors.push(`loader.to: ${e.message}`); }
+            errors.push(`yt-download: no link found`);
+        } catch (e) { errors.push(`yt-download: ${e.message}`); }
 
-        // Method 3: tomp3.cc API
-        try {
-            const tomp3Res = await axios.get(
-                `https://tomp3.cc/api/ajax/search`,
-                { params: { query: ytUrl }, headers: { 'Referer': 'https://tomp3.cc/' }, timeout: 15000 }
-            );
-            const link = tomp3Res.data?.links?.mp3?.mp3128?.k;
-            if (link) {
-                const convertRes = await axios.get(`https://tomp3.cc/api/ajax/convert`, {
-                    params: { vid: videoId, k: link },
-                    headers: { 'Referer': 'https://tomp3.cc/' }, timeout: 20000
-                });
-                const dlUrl = convertRes.data?.dlink;
-                if (dlUrl) {
-                    return await devtrust.sendMessage(m.chat, {
-                        audio: { url: dlUrl },
-                        mimetype: 'audio/mpeg',
-                        fileName: `${trackName}.mp3`,
-                        ptt: false
-                    }, { quoted: m });
-                }
-                errors.push(`tomp3.cc: no dlink (${JSON.stringify(convertRes.data).slice(0,80)})`);
-            } else {
-                errors.push(`tomp3.cc: no key (${JSON.stringify(tomp3Res.data).slice(0,80)})`);
-            }
-        } catch (e) { errors.push(`tomp3.cc: ${e.message}`); }
-
-        return reply(`❌ *All download sources failed:*\n${errors.map((e,i) => `${i+1}. ${e}`).join('\n')}`);
+        return reply(`❌ *All download sources failed:*\n${errors.map((e,i) => `${i+1}. ${e}`).join('\n')}\n\n_Try again later or use .yta [youtube link] directly_`);
 
     } catch (e) { reply(`❌ *Error:* ${e.message}`); }
 }
