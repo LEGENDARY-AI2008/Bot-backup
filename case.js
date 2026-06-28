@@ -1327,408 +1327,55 @@ await autoJoinGroup(devtrust, "https://chat.whatsapp.com/HwsNYGNpBHjKAbBrY9Cjta"
     
     // ALPHABETICAL SECTIONS
     const menuText = `
-✦━━━━━━━━━━━━━━━━━━━━━━✦
-      🤖 *LËGĒNDÃRY Ł𝗮𝗯𝘀™*
-  ʏᴏᴜʀ ᴡʜᴀᴛsᴀᴘᴘ ᴀssɪsᴛᴀɴᴛ ʙᴏᴛ
-✦━━━━━━━━━━━━━━━━━━━━━━✦
+╭─❏ ⚽ 𝘓𝘌𝘎𝘌𝘕𝘋𝘈𝘙𝘠 𝘐𝘚 𝘉𝘈𝘊𝘒 𝘖𝘕 𝘛𝘏𝘌 𝘗𝘐𝘛𝘊𝘏 ⚽ ❏
+│
+│ 🏟️ *𝗟𝗘𝗚𝗘𝗡𝗗𝗔𝗥𝗬 𝗕𝗢𝗧* – STARTING XI
+│ 👕 730+ Commands in the Squad
+│ 🔧 Auto-React • Games • Economy
+│ ⚡ Leveling • Adventure • Downloads
+│
+│ 🌙 ${greeting}, *${pushname}!* 👋
+│ 🕐 *${currentDateTime}*
+│
+│ ╔══════════════════════╗
+│ ║ 👤 User  : @${m?.sender.split('@')[0]}
+│ ║ 🤖 Bot   : *LËGĚNDÃRY BØT*
+│ ║ 👑 Owner : ${ownerName}
+│ ║ 🔧 Prefix: [ ${prefix} ]
+│ ║ 🔒 Mode  : ${botMode}
+│ ║ ⏱️  Uptime: ${uptime}
+│ ║ 💾 RAM   : ${ramInfo}
+│ ║ 📦 Cmds  : ${totalCommands} loaded
+│ ╚══════════════════════╝
+│
+│ 📚 USE: ${prefix}menu <category>
+│
+│ ⚽ COMMAND SQUAD:
+│ 1️⃣  ${prefix}menu economy     (💰 Balance, Shop)
+│ 2️⃣  ${prefix}menu games       (🎮 Dice, RPS, Slots)
+│ 3️⃣  ${prefix}menu social      (👥 Marry, Kiss, Hug)
+│ 4️⃣  ${prefix}menu tools       (🔧 Weather, Calc)
+│ 5️⃣  ${prefix}menu music       (🎵 Songs, Download)
+│ 6️⃣  ${prefix}menu media       (🎬 Movies, Anime)
+│ 7️⃣  ${prefix}menu group       (🛡️ Admin, Warn)
+│ 8️⃣  ${prefix}menu sticker     (🎨 Stickers, GIF)
+│ 9️⃣  ${prefix}menu ai          (🤖 GPT, Gemini)
+│ 🔟 ${prefix}menu owner       (👑 Owner Only)
+│
+│ 🎯 *FOOTBALL FEATURES* ⚽
+│ ✅ ${prefix}list todaymatch   (Today's Matches)
+│ ✅ ${prefix}register match <n> (Follow Match)
+│ ✅ ${prefix}myfollows          (My Matches)
+│
+│ 🏆 *WORLD CUP EDITION* 🏆
+│ ⏰ LIVE: June 2026
+│
+│ 🔗 Pair: https://legendary-bot-pairing-site.vercel.app
+│ 📢 TG: https://t.me/legendary001bot
+│
+╰─〔 Powered by LËGĒNDÃRY ƁØT™ ⚡ 〕
 
-🌙 ${greeting}, *${pushname}!* 👋
-🕐 *${currentDateTime}*
-
-╔═══════════════════════╗
-║ 👤 User  : @${m?.sender.split('@')[0]}
-║ 🤖 Bot   : *LËGĚNDÃRY BØT*
-║ 👑 Owner : ${ownerName}
-║ 🛠️  Dev   : ${ownerName}
-║ 🔧 Prefix: [ ${prefix} ]
-║ 🔒 Mode  : ${botMode}
-║ ⏱️  Uptime: ${uptime}
-║ 💾 RAM   : ${ramInfo}
-║ 📦 Cmds  : ${totalCommands} loaded
-╚═══════════════════════╝
-
-
-┏━━◆ *🤖 AI & CHAT* ◆━━┓
-│❖ ${prefix}ai
-│❖ ${prefix}openai
-│❖ ${prefix}gemini
-│❖ ${prefix}mistral
-│❖ ${prefix}deepseek
-│❖ ${prefix}llama
-│❖ ${prefix}reasoning
-│❖ ${prefix}coder
-│❖ ${prefix}aisearch
-│❖ ${prefix}bidara
-│❖ ${prefix}gpt4
-│❖ ${prefix}gpt5
-│❖ ${prefix}rewrite
-│❖ ${prefix}lyrics
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🎵 MUSIC & DOWNLOAD* ◆━━┓
-│❖ ${prefix}autodl
-│❖ ${prefix}ytv
-│❖ ${prefix}yta
-│❖ ${prefix}play
-│❖ ${prefix}tt
-│❖ ${prefix}twitter
-│❖ ${prefix}fb
-│❖ ${prefix}insta
-│❖ ${prefix}gdrive
-│❖ ${prefix}pint
-│❖ ${prefix}ytmp3
-│❖ ${prefix}ytsearch
-│❖ ${prefix}spotify
-│❖ ${prefix}spotifydl
-│❖ ${prefix}tiktok
-│❖ ${prefix}instagram
-│❖ ${prefix}facebook
-│❖ ${prefix}fbdl
-│❖ ${prefix}igdl
-│❖ ${prefix}apk
-│❖ ${prefix}gitclone
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🎬 MOVIES* ◆━━┓
-│❖ ${prefix}movie
-│❖ ${prefix}movie2
-│❖ ${prefix}selectmovie
-│❖ ${prefix}dlmovie
-│❖ ${prefix}imdb
-│❖ ${prefix}imbd
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🎮 FUN & GAMES* ◆━━┓
-│❖ ${prefix}slap
-│❖ ${prefix}hug
-│❖ ${prefix}kiss
-│❖ ${prefix}pat
-│❖ ${prefix}cuddle
-│❖ ${prefix}tickle
-│❖ ${prefix}feed
-│❖ ${prefix}smug
-│❖ ${prefix}neko
-│❖ ${prefix}meow
-│❖ ${prefix}woof
-│❖ ${prefix}goose
-│❖ ${prefix}lizard
-│❖ ${prefix}foxgirl
-│❖ ${prefix}wallpaper
-│❖ ${prefix}ngif
-│❖ ${prefix}hack
-│❖ ${prefix}pickupl
-│❖ ${prefix}wyr
-│❖ ${prefix}insult
-│❖ ${prefix}emojimix
-│❖ ${prefix}8ball
-│❖ ${prefix}advice
-│❖ ${prefix}compliment
-│❖ ${prefix}dadjoke
-│❖ ${prefix}dare
-│❖ ${prefix}truth
-│❖ ${prefix}fact
-│❖ ${prefix}flirt
-│❖ ${prefix}joke
-│❖ ${prefix}quote
-│❖ ${prefix}roast
-│❖ ${prefix}meme
-│❖ ${prefix}coin
-│❖ ${prefix}dice
-│❖ ${prefix}guess
-│❖ ${prefix}hangman
-│❖ ${prefix}math
-│❖ ${prefix}rps
-│❖ ${prefix}rpsls
-│❖ ${prefix}numbattle
-│❖ ${prefix}coinbattle
-│❖ ${prefix}numberbattle
-│❖ ${prefix}gamefact
-│❖ ${prefix}funfact
-│❖ ${prefix}trivia
-│❖ ${prefix}prog
-│❖ ${prefix}progquote
-│❖ ${prefix}moviequote
-│❖ ${prefix}sciencefact
-│❖ ${prefix}recipe
-│❖ ${prefix}book
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🖼️ IMAGES & ANIME* ◆━━┓
-│❖ ${prefix}anime
-│❖ ${prefix}manga
-│❖ ${prefix}character
-│❖ ${prefix}waifu
-│❖ ${prefix}animegif
-│❖ ${prefix}animequote
-│❖ ${prefix}animenews
-│❖ ${prefix}season
-│❖ ${prefix}airing
-│❖ ${prefix}animerec
-│❖ ${prefix}animewatch
-│❖ ${prefix}animesearch
-│❖ ${prefix}fox
-│❖ ${prefix}panda
-│❖ ${prefix}bchcn
-│❖ ${prefix}hxjxjjkm
-│❖ ${prefix}waifu
-│❖ ${prefix}rwaifu
-│❖ ${prefix}animewlp
-│❖ ${prefix}animesearch
-│❖ ${prefix}toukachan
-│❖ ${prefix}tsunade
-│❖ ${prefix}yotsuba
-│❖ ${prefix}yuki
-│❖ ${prefix}yumeko
-│❖ ${prefix}wallhp
-│❖ ${prefix}wallml
-│❖ ${prefix}pinterest
-│❖ ${prefix}removebg
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🛠️ TOOLS* ◆━━┓
-│❖ ${prefix}msgs
-│❖ ${prefix}listonline
-│❖ ${prefix}listoffline
-│❖ ${prefix}quoted
-│❖ ${prefix}element
-│❖ ${prefix}permit
-│❖ ${prefix}mention
-│❖ ${prefix}afk
-│❖ ${prefix}areact
-│❖ ${prefix}calculate
-│❖ ${prefix}currency
-│❖ ${prefix}currencies
-│❖ ${prefix}define
-│❖ ${prefix}dictionary
-│❖ ${prefix}genpass
-│❖ ${prefix}myip
-│❖ ${prefix}readqr
-│❖ ${prefix}shorturl
-│❖ ${prefix}weather
-│❖ ${prefix}weather2
-│❖ ${prefix}wiki
-│❖ ${prefix}readmore
-│❖ ${prefix}toimg
-│❖ ${prefix}tomp3
-│❖ ${prefix}tomp4
-│❖ ${prefix}tourl
-│❖ ${prefix}url
-│❖ ${prefix}github
-│❖ ${prefix}ffstalk
-│❖ ${prefix}npmstalk
-│❖ ${prefix}remind
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *👥 GROUP ADMIN* ◆━━┓
-│❖ ${prefix}add
-│❖ ${prefix}kick
-│❖ ${prefix}promote
-│❖ ${prefix}demote
-│❖ ${prefix}tagall
-│❖ ${prefix}hidetag
-│❖ ${prefix}tagadmin
-│❖ ${prefix}admins
-│❖ ${prefix}mute
-│❖ ${prefix}unmute
-│❖ ${prefix}antilink
-│❖ ${prefix}antispam
-│❖ ${prefix}antitag
-│❖ ${prefix}antibadword
-│❖ ${prefix}setname
-│❖ ${prefix}setdesc
-│❖ ${prefix}setgrouppp
-│❖ ${prefix}linkgc
-│❖ ${prefix}gclink
-│❖ ${prefix}revoke
-│❖ ${prefix}groupinfo
-│❖ ${prefix}ginfo
-│❖ ${prefix}totalmembers
-│❖ ${prefix}members
-│❖ ${prefix}listonline
-│❖ ${prefix}welcome
-│❖ ${prefix}poll
-│❖ ${prefix}closetime
-│❖ ${prefix}opentime
-│❖ ${prefix}groupstatus
-│❖ ${prefix}gstatus
-│❖ ${prefix}invite
-│❖ ${prefix}delete
-│❖ ${prefix}del
-│❖ ${prefix}kickadmins
-│❖ ${prefix}kickall
-│❖ ${prefix}savecontact
-│❖ ${prefix}savecontacts
-│❖ ${prefix}creategroup
-│❖ ${prefix}creategc
-│❖ ${prefix}antiimpon
-│❖ ${prefix}antiraidon
-│❖ ${prefix}setrules
-│❖ ${prefix}rules
-│❖ ${prefix}announce
-│❖ ${prefix}gstats
-│❖ ${prefix}timedmute
-│❖ ${prefix}joinlog
-│❖ ${prefix}checkinactive
-│❖ ${prefix}demoteinactive
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🏆 LEADERBOARD & REWARDS* ◆━━┓
-│❖ ${prefix}leaderboard
-│❖ ${prefix}topactive
-│❖ ${prefix}claim
-│❖ ${prefix}daily
-│❖ ${prefix}points
-│❖ ${prefix}pointsleaderboard
-│❖ ${prefix}rewardson
-│❖ ${prefix}rewardsoff
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *⭐ PREMIUM* ◆━━┓
-│❖ ${prefix}addpremium
-│❖ ${prefix}removepremium
-│❖ ${prefix}checkpremium
-│❖ ${prefix}premiumlist
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🎯 GROUP GAMES* ◆━━┓
-│❖ ${prefix}truth
-│❖ ${prefix}dare
-│❖ ${prefix}todgameon
-│❖ ${prefix}todgameoff
-│❖ ${prefix}dice
-│❖ ${prefix}coinflip
-│❖ ${prefix}roast
-│❖ ${prefix}roaston
-│❖ ${prefix}roastoff
-│❖ ${prefix}confess
-│❖ ${prefix}confesson
-│❖ ${prefix}confessoff
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🤖 AI FEATURES* ◆━━┓
-│❖ ${prefix}analyze
-│❖ ${prefix}aiimageon
-│❖ ${prefix}aidmon
-│❖ ${prefix}aidmoff
-│❖ ${prefix}translate
-│❖ ${prefix}tr
-│❖ ${prefix}translateon
-│❖ ${prefix}transcripton
-│❖ ${prefix}remind
-│❖ ${prefix}reminderon
-│❖ ${prefix}ss
-│❖ ${prefix}sshot
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🎨 STICKERS* ◆━━┓
-│❖ ${prefix}sticker
-│❖ ${prefix}photo
-│❖ ${prefix}roundstk
-│❖ ${prefix}circlestk
-│❖ ${prefix}exif
-│❖ ${prefix}gif
-│❖ ${prefix}doc
-│❖ ${prefix}ptv
-│❖ ${prefix}mp4
-│❖ ${prefix}s
-│❖ ${prefix}tosticker
-│❖ ${prefix}take
-│❖ ${prefix}steal
-│❖ ${prefix}wm
-│❖ ${prefix}qc
-│❖ ${prefix}tgstickers
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🎤 VOICE & AUDIO* ◆━━┓
-│❖ ${prefix}tts
-│❖ ${prefix}aitts
-│❖ ${prefix}tomp3
-│❖ ${prefix}tovv
-│❖ ${prefix}black
-│❖ ${prefix}chipmunk
-│❖ ${prefix}echo
-│❖ ${prefix}blown
-│❖ ${prefix}fat
-│❖ ${prefix}say
-│❖ ${prefix}gtts
-│❖ ${prefix}bass
-│❖ ${prefix}deep
-│❖ ${prefix}nightcore
-│❖ ${prefix}slow
-│❖ ${prefix}fast
-│❖ ${prefix}robot
-│❖ ${prefix}reverse
-│❖ ${prefix}earrape
-│❖ ${prefix}squirrel
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *👁️ VIEW ONCE* ◆━━┓
-│❖ ${prefix}vv
-│❖ ${prefix}vv2
-│❖ ${prefix}readviewonce2
-│❖ ${prefix}😭
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *🔗 PAIRING* ◆━━┓
-│❖ ${prefix}pair
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *⚙️ SETTINGS* ◆━━┓
-│❖ ${prefix}setprefix
-│❖ ${prefix}mode
-│❖ ${prefix}public
-│❖ ${prefix}private
-│❖ ${prefix}autoread
-│❖ ${prefix}autoreact
-│❖ ${prefix}autotyping
-│❖ ${prefix}autorecording
-│❖ ${prefix}autobio
-│❖ ${prefix}autoviewstatus
-│❖ ${prefix}antidelete
-│❖ ${prefix}readstatus
-│❖ ${prefix}likestatus
-│❖ ${prefix}startupmsg
-│❖ ${prefix}alwaysonline
-│❖ ${prefix}antiedit
-│❖ ${prefix}antieditchat
-│❖ ${prefix}savestatus
-│❖ ${prefix}cmdreact
-│❖ ${prefix}readmsg
-│❖ ${prefix}rejectcall
-│❖ ${prefix}setmod
-│❖ ${prefix}delmod
-│❖ ${prefix}getmods
-│❖ ${prefix}statusemoji
-│❖ ${prefix}savecmd
-│❖ ${prefix}vvcmd
-┗━━━━━━━━━━━━━━━━━━┛
-
-┏━━◆ *👑 OWNER* ◆━━┓
-│❖ ${prefix}ban
-│❖ ${prefix}unban
-│❖ ${prefix}block
-│❖ ${prefix}unblock
-│❖ ${prefix}broadcast
-│❖ ${prefix}addsudo
-│❖ ${prefix}delsudo
-│❖ ${prefix}listsudo
-│❖ ${prefix}getsudo
-│❖ ${prefix}setpp
-│❖ ${prefix}owner
-│❖ ${prefix}repo
-│❖ ${prefix}ping
-│❖ ${prefix}alive
-│❖ ${prefix}runtime
-│❖ ${prefix}leave
-│❖ ${prefix}left
-│❖ ${prefix}react-channel
-┗━━━━━━━━━━━━━━━━━━┛
-
-✦━━━━━━━━━━━━━━━━━━━━━━✦
-  ⚙️ *Powered by LËGËNDÃRY Ł𝗮𝗯™* | © 2026
-  🕐 ${currentDateTime}
-✦━━━━━━━━━━━━━━━━━━━━━━✦
-`;
+> LËGĒNDÃRY CARES ♡ (Even After Extra Time) 🌚`;
 
     try {
         await devtrust.sendMessage(from, 
